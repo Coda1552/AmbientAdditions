@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.phys.Vec3;
@@ -37,11 +37,11 @@ public class MoleDiggingGoal extends Goal {
 
    @Override
    public boolean canUse() {
-      if (this.mole.getRandom().nextInt(this.mole.isBaby() ? 50 : 1000) != 0) {
+      if (this.mole.getRandom().nextInt(this.mole.isBaby() ? 500 : 1000) != 0) {
          return false;
       } else {
          BlockPos blockpos = this.mole.blockPosition();
-         return this.level.getBlockState(blockpos.below()).is(Blocks.COARSE_DIRT);
+         return this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT);
       }
    }
 
@@ -73,20 +73,20 @@ public class MoleDiggingGoal extends Goal {
       Vec3 pos = mole.position();
 
       if (this.eatAnimationTick == 79) {
-         if (this.level.getBlockState(blockpos.below()).is(Blocks.COARSE_DIRT)) {
+         if (this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT)) {
 
             this.level.playSound(null, blockpos, SoundEvents.ROOTED_DIRT_BREAK, SoundSource.BLOCKS, 0.6F, 1.0F);
             this.mole.ate();
 
             for (int i = 0; i < 20; i++) {
-               this.level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.COARSE_DIRT.defaultBlockState()), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
+               this.level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(blockpos.below())), pos.x, pos.y, pos.z, 0.0D, 0.0D, 0.0D);
             }
          }
       }
       else if (this.eatAnimationTick == 55) {
          this.level.playSound(null, blockpos, SoundEvents.ROOTED_DIRT_PLACE, SoundSource.BLOCKS, 0.5F, 1.0F);
       }
-      else if (this.eatAnimationTick == 47) {
+      else if (this.eatAnimationTick == 47 && (level.getBlockState(blockpos.below()).is(Blocks.FARMLAND)) || level.isRainingAt(blockpos)) {
          List<ItemStack> items = mole.level().getServer().getLootData().getLootTable(DIGGING_LOOT).getRandomItems(new LootParams.Builder((ServerLevel) mole.level()).create(LootContextParamSets.EMPTY));
 
          ItemEntity itemEntity = EntityType.ITEM.create(level);

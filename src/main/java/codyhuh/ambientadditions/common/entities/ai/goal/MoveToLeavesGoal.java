@@ -22,7 +22,7 @@ public class MoveToLeavesGoal extends MoveToBlockGoal {
 
     @Override
     public double acceptedDistance() {
-        return 0.5D;
+        return 0.1D;
     }
 
     @Override
