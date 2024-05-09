@@ -55,10 +55,9 @@ public class AACatchableItem extends BucketItem {
 
     public InteractionResult useOn(UseOnContext context) {
         Level world = context.getLevel();
-        if (world.isClientSide) {
-            return InteractionResult.SUCCESS;
-        }
-        else {
+        Player player = context.getPlayer();
+
+        if (!world.isClientSide) {
             ItemStack itemstack = context.getItemInHand();
             BlockPos blockpos = context.getClickedPos();
             Direction direction = context.getClickedFace();
@@ -67,22 +66,26 @@ public class AACatchableItem extends BucketItem {
             BlockPos blockpos1;
             if (blockstate.getCollisionShape(world, blockpos).isEmpty()) {
                 blockpos1 = blockpos;
-            }
-            else {
+            } else {
                 blockpos1 = blockpos.relative(direction);
             }
-            Supplier<? extends EntityType<?>> entitytype = entityType;
-            Entity entityType = entitytype.get().spawn((ServerLevel) world, itemstack, context.getPlayer(), blockpos1, MobSpawnType.BUCKET, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
+            Supplier<? extends EntityType<?>> type = entityType;
+            Entity entityType = type.get().spawn((ServerLevel) world, itemstack, player, blockpos1, MobSpawnType.BUCKET, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
             if (entityType != null) {
-                if(!context.getPlayer().getAbilities().instabuild) {
+                if (player != null && !player.getAbilities().instabuild) {
                     itemstack.shrink(1);
-                    context.getPlayer().addItem(new ItemStack(item1));
+                    if (context.getItemInHand().isEmpty()) {
+                        player.setItemInHand(context.getHand(), new ItemStack(item1));
+                    }
+                    else {
+                        player.addItem(new ItemStack(item1));
+                    }
                 }
 
-                playEmptySound(context.getPlayer(), world, blockpos);
+                playEmptySound(player, world, blockpos);
             }
-            return InteractionResult.SUCCESS;
         }
+        return InteractionResult.SUCCESS;
     }
 
     @OnlyIn(Dist.CLIENT)
