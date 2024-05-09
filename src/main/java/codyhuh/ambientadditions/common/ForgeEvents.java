@@ -8,7 +8,6 @@ import codyhuh.ambientadditions.data.SedationProvider;
 import codyhuh.ambientadditions.registry.AAEntities;
 import codyhuh.ambientadditions.registry.AAItems;
 import codyhuh.ambientadditions.registry.AAParticles;
-import codyhuh.ambientadditions.registry.AATags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -16,11 +15,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +36,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
@@ -181,21 +177,6 @@ public class ForgeEvents {
                 }
 
                 entity.moveTo(pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F);
-                world.addFreshEntity(entity);
-            }
-
-            if (state.getBlock().defaultBlockState().is(AATags.STRIPPABLE_LOGS) && world.random.nextBoolean()) {
-                ItemStack stack;
-                if (ModList.get().isLoaded("farmersdelight")) {
-                    stack = new ItemStack(AAItems.BARK.get()); // todo
-                }
-                else {
-                    stack = new ItemStack(AAItems.BARK.get());
-                }
-                ItemEntity entity = EntityType.ITEM.create(world);
-
-                entity.setItem(stack);
-                entity.moveTo(pos.getX(), pos.getY(), pos.getZ());
                 world.addFreshEntity(entity);
             }
         }

@@ -1,22 +1,10 @@
 package codyhuh.ambientadditions.registry;
 
 import codyhuh.ambientadditions.AmbientAdditions;
-import codyhuh.ambientadditions.common.items.AACatchableItem;
-import codyhuh.ambientadditions.common.items.BlowgunItem;
-import codyhuh.ambientadditions.common.items.CrateItem;
-import codyhuh.ambientadditions.common.items.DartItem;
-import codyhuh.ambientadditions.common.items.DuckyMaskItem;
-import codyhuh.ambientadditions.common.items.StarfishArmItem;
-import codyhuh.ambientadditions.common.items.YetiFeedersItem;
+import codyhuh.ambientadditions.common.items.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.MobBucketItem;
-import net.minecraft.world.item.PlaceOnWaterBlockItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
@@ -48,7 +36,6 @@ public class AAItems {
     public static final RegistryObject<Item> PANCAKE_SLUG_POT = ITEMS.register("pancake_slug_pot", () -> new AACatchableItem(AAEntities.PANCAKE_SLUG::get, Items.FLOWER_POT, true, new Item.Properties().stacksTo(1)));
 
     // Drops & Materials
-    public static final RegistryObject<Item> BARK = ITEMS.register("bark", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> YETI_CRAB_FLUFF = ITEMS.register("yeti_crab_fluff", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ISOPOD_MOLT = ITEMS.register("isopod_molt", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> STARFISH_ARM = ITEMS.register("starfish_arm", () -> new StarfishArmItem(new Item.Properties()));

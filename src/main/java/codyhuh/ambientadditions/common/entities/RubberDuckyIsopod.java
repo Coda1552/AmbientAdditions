@@ -109,7 +109,7 @@ public class RubberDuckyIsopod extends PathfinderMob implements GeoEntity {
             double d1 = getY() + this.random.nextGaussian() * 0.02D;
             double d2 = getZ() + this.random.nextGaussian() * 0.02D;
             Vec3 vector3d = (new Vec3(((double)this.random.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D)).xRot(-this.getXRot() * ((float)Math.PI / 180F)).yRot(-this.getYRot() * ((float)Math.PI / 180F));
-            world.addParticle(new ItemParticleOption(ParticleTypes.ITEM,  new ItemStack(AAItems.BARK.get())), d0, d1, d2, vector3d.x, vector3d.y + 0.05D, vector3d.z);
+            world.addParticle(new ItemParticleOption(ParticleTypes.ITEM,  new ItemStack(log)), d0, d1, d2, vector3d.x, vector3d.y + 0.05D, vector3d.z);
 
             player.swing(hand);
             if (!player.getAbilities().instabuild) {
