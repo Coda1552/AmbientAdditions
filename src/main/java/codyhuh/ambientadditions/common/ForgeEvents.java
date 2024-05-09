@@ -115,7 +115,7 @@ public class ForgeEvents {
                         provider.setTimer(i - 1);
                     }
 
-                    if (provider.getLevel() >= AmbientAdditions.sedationLvlRequiredToCapture(living.getMaxHealth())) {
+                    if (tag.getBoolean("IsSedated")) {
                         zzzParticles(living, 30, serverLevel);
                         mob.getNavigation().stop();
                         mob.goalSelector.disableControlFlag(Goal.Flag.LOOK);

@@ -13,16 +13,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
@@ -64,6 +60,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(2, new FloatGoal(this));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
     }
@@ -185,11 +182,33 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.isResting()) {
+
+        if (isInWater()) {
+            setResting(false);
+            if (getPersistentData().getBoolean("IsSedated")) {
+                getPersistentData().putBoolean("IsSedated", false);
+            }
+        }
+        else if (this.isResting()) {
             this.setDeltaMovement(Vec3.ZERO);
             this.setPosRaw(this.getX(), Mth.floor(this.getY()), this.getZ());
+            if (level().getBlockState(blockPosition().below()).isAir()) {
+                setResting(false);
+                if (getPersistentData().getBoolean("IsSedated")) {
+                    getPersistentData().putBoolean("IsSedated", false);
+                }
+            }
         } else {
-            this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.6D, 1.0D));
+            if (getPersistentData().getBoolean("IsSedated")) {
+                this.setDeltaMovement(this.getDeltaMovement().multiply(0.25D, 0.0D, 0.25D).subtract(0.0D, 0.5D, 0.0D));
+
+                if (onGround()) {
+                    setResting(true);
+                }
+            }
+            else {
+                this.setDeltaMovement(this.getDeltaMovement().multiply(1.0D, 0.6D, 1.0D));
+            }
         }
     }
 
@@ -224,7 +243,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
         BlockPos blockpos1 = blockpos.below();
         if (this.isResting()) {
             boolean flag = this.isSilent();
-            if (this.level().getBlockState(blockpos1).is(BlockTags.LEAVES)) {
+            if (this.level().getBlockState(blockpos1).is(BlockTags.LEAVES) || getPersistentData().getBoolean("IsSedated")) {
                 if (this.random.nextInt(200) == 0) {
                     this.yHeadRot = (float)this.random.nextInt(360);
                 }
