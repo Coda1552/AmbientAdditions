@@ -1,5 +1,6 @@
 package codyhuh.ambientadditions.common.entities;
 
+import codyhuh.ambientadditions.common.entities.ai.goal.MoveToLeavesGoal;
 import codyhuh.ambientadditions.common.entities.util.AAAnimations;
 import codyhuh.ambientadditions.registry.AAItems;
 import net.minecraft.core.BlockPos;
@@ -12,16 +13,14 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.Animal;
@@ -29,9 +28,11 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -54,15 +55,17 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.2D).add(Attributes.FLYING_SPEED, 0.55D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.05D).add(Attributes.FLYING_SPEED, 0.55D);
     }
 
     @Override
     protected void registerGoals() {
+        this.goalSelector.addGoal(0, new MoveToLeavesGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
         this.goalSelector.addGoal(2, new FloatGoal(this));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(4, new WaterAvoidingRandomFlyingGoal(this, 31.0D));
     }
 
     @Override
@@ -180,6 +183,12 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     }
 
     @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_146746_, DifficultyInstance p_146747_, MobSpawnType p_146748_, @Nullable SpawnGroupData p_146749_, @Nullable CompoundTag p_146750_) {
+        setDeltaMovement(getDeltaMovement().add(0.0D, 0.25D, 0.0D));
+       return super.finalizeSpawn(p_146746_, p_146747_, p_146748_, p_146749_, p_146750_);
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -198,7 +207,8 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
                     getPersistentData().putBoolean("IsSedated", false);
                 }
             }
-        } else {
+        }
+        else {
             if (getPersistentData().getBoolean("IsSedated")) {
                 this.setDeltaMovement(this.getDeltaMovement().multiply(0.25D, 0.0D, 0.25D).subtract(0.0D, 0.5D, 0.0D));
 
@@ -253,7 +263,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
                     this.level().levelEvent(null, 1025, blockpos, 0);
                 }
             }
-        } else {
+        } /*else {
             if (this.targetPosition != null && (!this.level().isEmptyBlock(this.targetPosition) || this.targetPosition.getY() < 1)) {
                 this.targetPosition = null;
             }
@@ -275,7 +285,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
             if (this.level().getBlockState(blockpos1).is(BlockTags.LEAVES)) {
                 this.setResting(true);
             }
-        }
+        }*/
     }
 
     @Override
@@ -336,7 +346,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
                     float f1 = (float)(this.speedModifier * this.entity.getAttributeValue(Attributes.MOVEMENT_SPEED));
                     if (this.entity.isInWater()) {
                         this.entity.setSpeed(f1 * 0.02F);
-                        float f2 = -((float)(Mth.atan2(d1, (double)Mth.sqrt((float) (d0 * d0 + d2 * d2))) * (double)(180F / (float)Math.PI)));
+                        float f2 = -((float)(Mth.atan2(d1, Mth.sqrt((float) (d0 * d0 + d2 * d2))) * (double)(180F / (float)Math.PI)));
                         f2 = Mth.clamp(Mth.wrapDegrees(f2), -85.0F, 85.0F);
                         this.entity.setXRot(this.rotlerp(this.entity.getXRot(), f2, 5.0F));
                         float f3 = Mth.cos(this.entity.getXRot() * ((float)Math.PI / 180F));
@@ -344,7 +354,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
                         this.entity.zza = f3 * f1;
                         this.entity.yya = -f4 * f1;
                     } else {
-                        this.entity.setSpeed(f1 * 0.1F);
+                        this.entity.setSpeed(f1);
                     }
                 }
             } else {

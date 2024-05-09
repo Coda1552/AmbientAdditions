@@ -18,11 +18,6 @@ public class FrogLayEggsGoal extends MoveToBlockGoal {
     }
 
     @Override
-    public boolean canContinueToUse() {
-        return super.canContinueToUse();
-    }
-
-    @Override
     public boolean canUse() {
         return frog.isGravid() && super.canUse();
     }
@@ -46,8 +41,6 @@ public class FrogLayEggsGoal extends MoveToBlockGoal {
             frog.setGravid(false);
             stop();
         }
-
-        System.out.println(getMoveToTarget());
     }
 
     @Override
