@@ -7,10 +7,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.level.LevelReader;
 
-public class MoveToLeavesGoal extends MoveToBlockGoal {
+public class BatMoveToLeavesGoal extends MoveToBlockGoal {
     private final WhiteFruitBat bat;
 
-    public MoveToLeavesGoal(WhiteFruitBat mob) {
+    public BatMoveToLeavesGoal(WhiteFruitBat mob) {
         super(mob, 3.0D, 8, 24);
         this.bat = mob;
     }

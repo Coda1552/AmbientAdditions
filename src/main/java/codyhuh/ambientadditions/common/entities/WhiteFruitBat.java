@@ -1,8 +1,8 @@
 package codyhuh.ambientadditions.common.entities;
 
+import codyhuh.ambientadditions.common.entities.ai.goal.BatFlyWanderGoal;
 import codyhuh.ambientadditions.common.entities.ai.goal.BatLandOnGroundGoal;
-import codyhuh.ambientadditions.common.entities.ai.goal.BatWanderGoal;
-import codyhuh.ambientadditions.common.entities.ai.goal.MoveToLeavesGoal;
+import codyhuh.ambientadditions.common.entities.ai.goal.BatMoveToLeavesGoal;
 import codyhuh.ambientadditions.common.entities.ai.movement.GroundAndFlyingMoveControl;
 import codyhuh.ambientadditions.common.entities.util.AAAnimations;
 import codyhuh.ambientadditions.registry.AAItems;
@@ -48,33 +48,32 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     private static final EntityDataAccessor<Boolean> IS_FLYING = SynchedEntityData.defineId(WhiteFruitBat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> IS_LANDING = SynchedEntityData.defineId(WhiteFruitBat.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> FLIGHT_TICKS = SynchedEntityData.defineId(WhiteFruitBat.class, EntityDataSerializers.INT);
-    public BatWanderGoal wanderGoal;
+    public BatFlyWanderGoal wanderGoal;
     public BatLandOnGroundGoal landGoal;
     public float prevTilt;
     public float tilt;
 
     public WhiteFruitBat(EntityType<? extends WhiteFruitBat> type, Level worldIn) {
         super(type, worldIn);
-        this.setResting(true);
         this.moveControl = new GroundAndFlyingMoveControl(this, 60, 12000);
         this.lookControl = new SmoothSwimmingLookControl(this, 10);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.025D).add(Attributes.FLYING_SPEED, 0.55D);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 10.0D).add(Attributes.MOVEMENT_SPEED, 0.025D).add(Attributes.FLYING_SPEED, 0.15D);
     }
 
     @Override
     protected void registerGoals() {
         landGoal = new BatLandOnGroundGoal(this, 1.0D);
-        wanderGoal = new BatWanderGoal(this, 1.0D, 1.0F);
-        this.goalSelector.addGoal(0, new MoveToLeavesGoal(this));
+        wanderGoal = new BatFlyWanderGoal(this, 1.0D, 0.01F);
+        this.goalSelector.addGoal(0, wanderGoal);
+        this.goalSelector.addGoal(0, new BatMoveToLeavesGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
+        this.goalSelector.addGoal(1, landGoal);
         this.goalSelector.addGoal(2, new FloatGoal(this));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(5, landGoal);
-        this.goalSelector.addGoal(6, wanderGoal);
     }
 
     @Override
@@ -106,7 +105,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     protected PathNavigation createNavigation(Level worldIn) {
         FlyingPathNavigation flyingpathnavigator = new FlyingPathNavigation(this, worldIn) {
             public boolean isStableDestination(BlockPos pos) {
-                return !this.level.getBlockState(pos.below()).isAir();
+                return true;
             }
         };
         flyingpathnavigator.setCanOpenDoors(false);
@@ -234,7 +233,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     public boolean canFly() {
         BlockPos pos = blockPosition();
 
-        return !level().getBlockState(pos.offset(0, -1, 0)).isSolid();
+        return !level().getBlockState(pos.below()).isSolid();
     }
 
     @Override
@@ -288,7 +287,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
             wanderGoal.trigger();
         }
 
-        if (onGround()) {
+        /*if (onGround()) {
             setResting(true);
         } else if (isInWater()) {
             setResting(false);
@@ -312,7 +311,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
                     setResting(true);
                 }
             }
-        }
+        }*/
     }
 
     @Override
@@ -346,7 +345,8 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
         BlockPos blockpos1 = blockpos.below();
         if (this.level().getBlockState(blockpos1).is(BlockTags.LEAVES)) {
             this.setResting(true);
-        } else if (this.isResting()) {
+        }
+        else if (this.isResting()) {
             boolean flag = this.isSilent();
             if (!this.level().getBlockState(blockpos1).isAir() || getPersistentData().getBoolean("IsSedated")) {
                 if (this.random.nextInt(200) == 0) {

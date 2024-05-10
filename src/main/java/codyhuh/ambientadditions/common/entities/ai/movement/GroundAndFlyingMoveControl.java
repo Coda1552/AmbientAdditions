@@ -35,10 +35,10 @@ public class GroundAndFlyingMoveControl extends MoveControl {
                 float f = (float) (Mth.atan2(d2, d0) * (double) (180F / (float) Math.PI)) - 90.0F;
                 this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f, 90.0F));
                 float f1;
-                if (this.mob.isFlying()) {
+                if (!this.mob.isFlying()) {
                     f1 = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
                 } else {
-                    f1 = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.FLYING_SPEED));
+                    f1 = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.FLYING_SPEED)) * 0.25F;
                 }
 
                 this.mob.setSpeed(f1);

@@ -11,10 +11,10 @@ import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public class BatWanderGoal extends WaterAvoidingRandomStrollGoal {
+public class BatFlyWanderGoal extends WaterAvoidingRandomStrollGoal {
     private final WhiteFruitBat mob;
 
-    public BatWanderGoal(WhiteFruitBat goalOwner, double speedMod, float probability) {
+    public BatFlyWanderGoal(WhiteFruitBat goalOwner, double speedMod, float probability) {
         super(goalOwner, speedMod, probability);
         this.mob = goalOwner;
     }
@@ -40,11 +40,7 @@ public class BatWanderGoal extends WaterAvoidingRandomStrollGoal {
             trigger();
         }
 
-        speedModifier = mob.isFlying() && !mob.isControlledByLocalInstance() ? 10.0D : 1.0D;
-    }
-
-    public void trigger() {
-        forceTrigger = true;
+        speedModifier = mob.isFlying() ? 10.0D : 1.0D;
     }
 
     @Nullable
@@ -52,7 +48,8 @@ public class BatWanderGoal extends WaterAvoidingRandomStrollGoal {
     protected Vec3 getPosition() {
         Vec3 vec3 = this.mob.getViewVector(1.0F);
         int i = 32;
-        Vec3 pos = findPos(this.mob, i, 4, vec3.x, vec3.z, ((float)Math.PI / 2F), 8, 6);
+        int y = 16;
+        Vec3 pos = findPos(this.mob, i, 4 * y, vec3.x, vec3.z, ((float)Math.PI / 2F), 8 * y, 6 * y);
         return pos != null ? pos : AirAndWaterRandomPos.getPos(this.mob, i, 4, -2, vec3.x, vec3.z, ((float)Math.PI / 2F));
     }
 
