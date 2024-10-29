@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.util.AirAndWaterRandomPos;
 import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.ai.util.RandomPos;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,15 +24,16 @@ public class BatFlyWanderGoal extends WaterAvoidingRandomStrollGoal {
     public void start() {
         super.start();
 
-        if (!mob.isFlying() && mob.wantsToFly()) {
-            mob.setDeltaMovement(mob.getDeltaMovement().add(0.0D, 0.25D, 0.0D));
-            mob.setFlying(true);
-        }
+        Path path = mob.getNavigation().createPath(getPosition().x(), getPosition().y(), getPosition().z(), 1);
+
+        mob.getNavigation().moveTo(path, speedModifier);
+        mob.setDeltaMovement(mob.getDeltaMovement().add(0.0D, 0.25D, 0.0D));
+        mob.setFlying(true);
     }
 
     @Override
     public boolean canUse() {
-        return (forceTrigger || mob.wantsToFly()) && super.canUse();
+        return forceTrigger || (mob.wantsToFly() && super.canUse());
     }
 
     @Override

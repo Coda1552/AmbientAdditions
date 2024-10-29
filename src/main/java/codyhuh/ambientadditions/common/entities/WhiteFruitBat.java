@@ -14,7 +14,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -66,7 +65,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     @Override
     protected void registerGoals() {
         landGoal = new BatLandOnGroundGoal(this, 1.0D);
-        wanderGoal = new BatFlyWanderGoal(this, 1.0D, 0.01F);
+        wanderGoal = new BatFlyWanderGoal(this, 4.0D, 0.01F);
         this.goalSelector.addGoal(0, wanderGoal);
         this.goalSelector.addGoal(0, new BatMoveToLeavesGoal(this));
         this.goalSelector.addGoal(1, new PanicGoal(this, 2.0D));
@@ -80,6 +79,12 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
     public void travel(Vec3 vec3d) {
         boolean flying = this.isFlying();
         float speed = (float) this.getAttributeValue(flying ? Attributes.FLYING_SPEED : Attributes.MOVEMENT_SPEED);
+
+        if (isResting()) {
+            vec3d = Vec3.ZERO;
+            super.travel(vec3d);
+            return;
+        }
 
         if (flying) {
             this.moveRelative(speed, vec3d);
@@ -281,9 +286,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
         double x = getDeltaMovement().x();
         double z = getDeltaMovement().z();
 
-        boolean notMoving = Math.abs(x) < 0.1D && Math.abs(z) < 0.1D;
-
-        if (wanderGoal != null && isFlying() && !isLanding() && wantsToFly() && notMoving) {
+        if (wanderGoal != null && wantsToFly()) {
             wanderGoal.trigger();
         }
 
@@ -343,7 +346,7 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
         super.customServerAiStep();
         BlockPos blockpos = this.blockPosition();
         BlockPos blockpos1 = blockpos.below();
-        if (this.level().getBlockState(blockpos1).is(BlockTags.LEAVES)) {
+        if (!this.level().getBlockState(blockpos1).isAir() && this.level().getFluidState(blockpos1).isEmpty()) {
             this.setResting(true);
         }
         else if (this.isResting()) {
