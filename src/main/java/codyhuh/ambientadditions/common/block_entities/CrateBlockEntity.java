@@ -28,7 +28,6 @@ public class CrateBlockEntity extends BlockEntity {
 
     @Override
     public void saveAdditional(CompoundTag tag) {
-        //tag.put(DATA, getCreatureData(tag));
         super.saveAdditional(tag);
     }
 }

@@ -29,7 +29,7 @@ public class AnimalMixin extends PathfinderMob {
         if (getPersistentData().getBoolean("IsSedated") && sedationLevel >= AmbientAdditions.sedationLvlRequiredToCapture(getMaxHealth())) {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.is(AAItems.CRATE.get()) && CrateItem.containsEntity(stack)) {
-                ((CrateItem)stack.getItem()).successfulCrate(this, player, hand, stack, level());
+                ((CrateItem)stack.getItem()).successfulCrate(this, stack, level());
             }
             else {
                 cir.setReturnValue(InteractionResult.SUCCESS);

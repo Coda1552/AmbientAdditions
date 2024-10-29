@@ -1,7 +1,7 @@
 {
   "itemGroup.ambientadditions": "Ambient Additions",
 
-  "item.ambientadditions.crate": "Crate",
+  "block.ambientadditions.crate": "Crate",
   "item.ambientadditions.blowgun": "Blowgun",
   "item.ambientadditions.dart": "Dart",
   "item.ambientadditions.ducky_mask": "Ducky Mask",

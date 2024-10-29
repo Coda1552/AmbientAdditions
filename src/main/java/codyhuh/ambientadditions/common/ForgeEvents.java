@@ -1,13 +1,13 @@
 package codyhuh.ambientadditions.common;
 
 import codyhuh.ambientadditions.AmbientAdditions;
+import codyhuh.ambientadditions.common.block_entities.CrateBlockEntity;
+import codyhuh.ambientadditions.common.blocks.CrateBlock;
 import codyhuh.ambientadditions.common.entities.RubberDuckyIsopod;
 import codyhuh.ambientadditions.common.entities.util.AbstractFrog;
 import codyhuh.ambientadditions.data.SedationData;
 import codyhuh.ambientadditions.data.SedationProvider;
-import codyhuh.ambientadditions.registry.AAEntities;
-import codyhuh.ambientadditions.registry.AAItems;
-import codyhuh.ambientadditions.registry.AAParticles;
+import codyhuh.ambientadditions.registry.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -19,11 +19,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -34,6 +37,7 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -143,6 +147,51 @@ public class ForgeEvents {
             parentA.setGravid(true);
             parentB.getNavigation().stop();
             e.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockBroken(BlockEvent.BreakEvent e) {
+        Player player = e.getPlayer();
+        BlockState state = e.getState();
+        LevelAccessor level = e.getLevel();
+        BlockPos pos = e.getPos();
+
+        if (state.is(AABlocks.CRATE.get())) {
+
+            ItemStack crateItem = new ItemStack(AAItems.CRATE.get());
+
+            if (state.getValue(CrateBlock.FULL)) {
+                if (level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
+
+                    CompoundTag tag = crateItem.getOrCreateTag();
+                    tag.put("CreatureData", crate.getCreatureData());
+                }
+            }
+            Block.popResource((Level) level, pos, crateItem);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent e) {
+        Entity entity = e.getEntity();
+        BlockState state = e.getState();
+        Level level = (Level)e.getLevel();
+        BlockPos pos = e.getPos();
+
+        if (entity instanceof Player player) {
+            ItemStack stack = player.getItemInHand(player.getUsedItemHand());
+
+            CompoundTag targetTag = stack.getOrCreateTag().getCompound("CreatureData");
+
+            if (!targetTag.isEmpty()) {
+                level.setBlockEntity(new CrateBlockEntity(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true)));
+                level.setBlock(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true), 3);
+
+                CrateBlockEntity crate = level.getBlockEntity(pos, AABlockEntities.CRATE.get()).get();
+
+                crate.setCreatureData(targetTag, crate.getPersistentData());
+            }
         }
     }
 
