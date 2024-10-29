@@ -101,7 +101,7 @@ public class CrateItem extends BlockItem {
                     double y = target.getRandomY();
                     double z = target.getRandomZ(1.0D);
 
-                    serverLevel.sendParticles(ParticleTypes.CRIT, x, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+                    serverLevel.sendParticles(ParticleTypes.SMOKE, x, y, z, 1, 0.0D, 0.0D, 0.0D, 0.0D);
                 }
             }
         }
