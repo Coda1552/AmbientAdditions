@@ -1,10 +1,10 @@
 {
   "variants": {
     "full=false": {
-      "model": "minecraft:block/barrel_open"
+      "model": "ambientadditions:block/crate_empty"
     },
     "full=true": {
-      "model": "minecraft:block/barrel"
+      "model": "ambientadditions:block/crate"
     }
   }
 }

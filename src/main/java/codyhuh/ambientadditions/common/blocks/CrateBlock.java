@@ -50,8 +50,11 @@ public class CrateBlock extends BaseEntityBlock {
         if (state.getValue(FULL) && level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
             ItemStack stack = new ItemStack(AAItems.CRATE.get());
 
-            if (!player.getInventory().add(stack)) player.drop(stack, true);
-            else player.addItem(stack);
+
+            if (!player.getAbilities().instabuild) {
+                if (!player.getInventory().add(stack)) player.drop(stack, true);
+                else player.addItem(stack);
+            }
 
             level.levelEvent(2001, pos, getId(level.getBlockState(pos)));
             level.removeBlock(pos, false);

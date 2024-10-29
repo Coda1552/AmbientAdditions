@@ -47,6 +47,11 @@ public class CrateItem extends BlockItem {
     }
 
     @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return containsEntity(stack) ? 1 : super.getMaxStackSize(stack);
+    }
+
+    @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
         Level level = player.level();
 

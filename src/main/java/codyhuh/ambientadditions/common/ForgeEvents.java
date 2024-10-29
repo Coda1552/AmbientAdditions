@@ -158,7 +158,6 @@ public class ForgeEvents {
         BlockPos pos = e.getPos();
 
         if (state.is(AABlocks.CRATE.get())) {
-
             ItemStack crateItem = new ItemStack(AAItems.CRATE.get());
 
             if (state.getValue(CrateBlock.FULL)) {
@@ -166,9 +165,14 @@ public class ForgeEvents {
 
                     CompoundTag tag = crateItem.getOrCreateTag();
                     tag.put("CreatureData", crate.getCreatureData());
+                    Block.popResource((Level) level, pos, crateItem);
                 }
             }
-            Block.popResource((Level) level, pos, crateItem);
+            else {
+                if (!player.getAbilities().instabuild) {
+                    Block.popResource((Level) level, pos, crateItem);
+                }
+            }
         }
     }
 
