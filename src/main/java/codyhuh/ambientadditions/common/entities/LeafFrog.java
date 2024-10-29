@@ -40,7 +40,7 @@ public class LeafFrog extends AbstractFrog implements GeoEntity {
     private <E extends GeoEntity> PlayState predicate(AnimationState<E> event) {
         if (event.isMoving()) {
             event.setAnimation(AAAnimations.WALK);
-            event.getController().setAnimationSpeed(1.5D);
+            event.getController().setAnimationSpeed(1.85D);
         }
         else {
             event.setAnimation(AAAnimations.IDLE);
