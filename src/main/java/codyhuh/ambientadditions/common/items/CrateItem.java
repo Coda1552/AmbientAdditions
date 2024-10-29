@@ -1,7 +1,10 @@
 package codyhuh.ambientadditions.common.items;
 
 import codyhuh.ambientadditions.AmbientAdditions;
+import codyhuh.ambientadditions.common.block_entities.CrateBlockEntity;
+import codyhuh.ambientadditions.common.blocks.CrateBlock;
 import codyhuh.ambientadditions.data.SedationProvider;
+import codyhuh.ambientadditions.registry.AABlocks;
 import codyhuh.ambientadditions.registry.AAItems;
 import codyhuh.ambientadditions.registry.AATags;
 import net.minecraft.ChatFormatting;
@@ -76,29 +79,21 @@ public class CrateItem extends Item {
     }
 
     public InteractionResult successfulCrate(LivingEntity target, Player player, InteractionHand hand, ItemStack stack, Level level) {
-        ItemStack stack1 = player.getItemInHand(hand);
-
-        boolean more = stack.getCount() > 1;
-
-        if (more) {
-            stack1 = new ItemStack(AAItems.CRATE.get());
-            stack.shrink(1);
-        }
+        stack.shrink(1);
 
         CompoundTag targetTag = target.serializeNBT();
         targetTag.putString("OwnerName", player.getName().getString());
-        CompoundTag tag = stack1.getOrCreateTag();
-        tag.put(DATA_CREATURE, targetTag);
-        stack1.setTag(tag);
-
-        if (more) {
-            if (!player.getInventory().add(stack1)) player.drop(stack1, true);
-            else player.addItem(stack1);
-        }
 
         target.discard();
 
-        level.playSound(null, player.blockPosition(), SoundEvents.BARREL_CLOSE, SoundSource.AMBIENT, 1, 1);
+        level.setBlock(target.blockPosition(), AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true), 3);
+        level.setBlockEntity(new CrateBlockEntity(target.blockPosition(), AABlocks.CRATE.get().defaultBlockState()));
+
+        if (level.getBlockEntity(target.blockPosition()) instanceof CrateBlockEntity crate) {
+            crate.setCreatureData(targetTag, crate.getPersistentData());
+        }
+
+        level.playSound(null, player.blockPosition(), SoundEvents.BARREL_CLOSE, SoundSource.PLAYERS, 1, 1);
 
         if (level instanceof ServerLevel serverLevel) {
             double width = target.getBbWidth();
@@ -146,7 +141,8 @@ public class CrateItem extends Item {
         if (rt.getType() == HitResult.Type.MISS) return InteractionResultHolder.pass(stack);
         BlockPos pos = rt.getBlockPos();
         if (!(level.getBlockState(pos).getBlock() instanceof LiquidBlock)) return InteractionResultHolder.success(stack);
-        return new InteractionResultHolder<>(releaseEntity(level, player, stack, pos, rt.getDirection()), stack);
+        //return new InteractionResultHolder<>(releaseEntity(level, player, stack, pos, rt.getDirection()), stack);
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -204,7 +200,7 @@ public class CrateItem extends Item {
         LivingEntity entity;
 
         if (type == null || (entity = (LivingEntity) type.create(level)) == null) {
-            AmbientAdditions.LOGGER.error("Something went wrong releasing an animal from a Crate!");
+            AmbientAdditions.LOGGER.error("Something went wrong releasing an animal from a crate!");
             return InteractionResult.FAIL;
         }
 
@@ -228,7 +224,7 @@ public class CrateItem extends Item {
             if (stack.hasCustomHoverName()) entity.setCustomName(stack.getHoverName());
             stack.removeTagKey(DATA_CREATURE);
             level.addFreshEntity(entity);
-            level.playSound(null, entity.blockPosition(), SoundEvents.BARREL_OPEN, SoundSource.AMBIENT, 1, 1);
+            level.playSound(null, entity.blockPosition(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 1, 1);
         }
 
         return InteractionResult.SUCCESS;
@@ -270,7 +266,7 @@ public class CrateItem extends Item {
             if (context.getLevel().addFreshEntity(entity)) {
                 itemstack.shrink(1);
             }
-            context.getLevel().playSound(null, entity.blockPosition(), SoundEvents.BARREL_OPEN, SoundSource.AMBIENT, 1, 1);
+            context.getLevel().playSound(null, entity.blockPosition(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 1, 1);
             context.getPlayer().setItemInHand(context.getHand(), new ItemStack(AAItems.CRATE.get()));
 
             return InteractionResult.CONSUME;

@@ -23,6 +23,7 @@ public class AmbientAdditions {
         AAEntities.ENTITIES.register(bus);
         AASounds.SOUNDS.register(bus);
         AABlocks.BLOCKS.register(bus);
+        AABlockEntities.BLOCK_ENTITIES.register(bus);
         AAParticles.PARTICLES.register(bus);
         AACreativeModeTabs.CREATIVE_MODE_TABS.register(bus);
     }

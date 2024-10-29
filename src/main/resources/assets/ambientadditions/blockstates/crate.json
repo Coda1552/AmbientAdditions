@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "full=false": {
+      "model": "minecraft:block/barrel_open"
+    },
+    "full=true": {
+      "model": "minecraft:block/barrel"
+    }
+  }
+}
