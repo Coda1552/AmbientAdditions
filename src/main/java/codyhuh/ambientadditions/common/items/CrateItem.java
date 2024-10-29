@@ -97,23 +97,17 @@ public class CrateItem extends BlockItem {
             crate.setCreatureData(targetTag, crate.getPersistentData());
         }
 
-        if (level.isClientSide) {
-            for (int i = 0; i <= 5; ++i) {
+        if (level instanceof ServerLevel server) {
+            double d0 = 0.5D;
+            double d1 = AABlocks.CRATE.get().defaultBlockState().getShape(level, pos).max(Direction.Axis.Y);
 
-                double d0 = 0.5D;
-                double d1 = AABlocks.CRATE.get().defaultBlockState().getShape(level, pos).max(Direction.Axis.Y);
-
-                for (int j = 0; j < 8; ++j) {
-                    double d2 = level.random.nextGaussian() * 0.02D;
-                    double d3 = level.random.nextGaussian() * 0.02D;
-                    double d4 = level.random.nextGaussian() * 0.02D;
-                    double d5 = 0.5D - d0;
-                    double d6 = (double) pos.getX() + d5 + level.random.nextDouble() * d0 * 2.0D;
-                    double d7 = (double) pos.getY() + level.random.nextDouble() * d1;
-                    double d8 = (double) pos.getZ() + d5 + level.random.nextDouble() * d0 * 2.0D;
-                    level.addParticle(ParticleTypes.POOF, d6, d7, d8, d2, d3, d4);
-                }
-            }
+            double d2 = level.random.nextGaussian() * 0.02D;
+            double d3 = level.random.nextGaussian() * 0.02D;
+            double d4 = level.random.nextGaussian() * 0.02D;
+            double d6 = (double) pos.getX() + level.random.nextDouble() * d0 * 2.0D;
+            double d7 = (double) pos.getY() + level.random.nextDouble() * d1;
+            double d8 = (double) pos.getZ() + level.random.nextDouble() * d0 * 2.0D;
+            server.sendParticles(ParticleTypes.POOF, d6, d7, d8, 100, d2, d3, d4, 0.1D);
         }
 
         return InteractionResult.PASS;
