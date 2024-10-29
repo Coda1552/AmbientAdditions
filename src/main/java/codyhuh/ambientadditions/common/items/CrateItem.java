@@ -63,15 +63,8 @@ public class CrateItem extends Item {
 
         if (canBeCrated(target) && target.getPersistentData().getBoolean("IsSedated") && sedationLevel >= AmbientAdditions.sedationLvlRequiredToCapture(target.getMaxHealth())) {
 
-            if (target instanceof TamableAnimal tame) {
-                //Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(tame.mobInteract(player, hand) + ""), false); todo - remove
-
-                if (tame.isTame() && tame.isOwnedBy(player)) {
-                    return successfulCrate(tame, player, hand, stack, level);
-                }
-                else {
-                    return unsuccessfulCrate(tame, level);
-                }
+            if (target instanceof TamableAnimal tame && tame.isTame()) {
+                return unsuccessfulCrate(tame, level);
             }
             else {
                 return successfulCrate(target, player, hand, stack, level);
