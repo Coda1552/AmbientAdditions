@@ -114,19 +114,19 @@ public class CrateItem extends BlockItem {
     }
 
     private InteractionResult unsuccessfulCrate(LivingEntity target, Level level) {
-        if (level instanceof ServerLevel serverLevel) {
-            double width = target.getBbWidth();
-            for (int i = 0; i <= Math.floor(width) * 25; ++i) {
+        if (level instanceof ServerLevel server) {
+            BlockPos pos = target.blockPosition();
 
-                for (int j = 0; j < 12; j++) {
-                    double x = target.getRandomX(1.0D);
-                    double y = target.getRandomY();
-                    double z = target.getRandomZ(1.0D);
+            double d0 = 0.5D;
+            double d1 = AABlocks.CRATE.get().defaultBlockState().getShape(level, pos).max(Direction.Axis.Y);
 
-                    serverLevel.sendParticles(ParticleTypes.SMOKE, x, y, z, 1, 0.0D, 0.0D, 0.0D, 0.05D);
-                }
-            }
-
+            double d2 = level.random.nextGaussian() * 0.02D;
+            double d3 = level.random.nextGaussian() * 0.02D;
+            double d4 = level.random.nextGaussian() * 0.02D;
+            double d6 = (double) pos.getX() + level.random.nextDouble() * d0 * 2.0D;
+            double d7 = (double) pos.getY() + level.random.nextDouble() * d1;
+            double d8 = (double) pos.getZ() + level.random.nextDouble() * d0 * 2.0D;
+            server.sendParticles(ParticleTypes.SMOKE, d6, d7, d8, 100, d2, d3, d4, 0.1D);
         }
         return InteractionResult.PASS;
     }
