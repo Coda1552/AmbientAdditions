@@ -183,11 +183,16 @@ public class ForgeEvents {
         Level level = (Level)e.getLevel();
         BlockPos pos = e.getPos();
 
-        if (entity instanceof Player player) {
+        if (state.getBlock() instanceof CrateBlock && entity instanceof Player player) {
             ItemStack stack = player.getItemInHand(player.getUsedItemHand());
 
-            CompoundTag targetTag = stack.getOrCreateTag().getCompound("CreatureData");
+            CompoundTag targetTag = stack.getTag();
 
+            if (targetTag == null) {
+                return;
+            }
+
+            targetTag = targetTag.getCompound("CreatureData");
             if (!targetTag.isEmpty()) {
                 level.setBlockEntity(new CrateBlockEntity(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true)));
                 level.setBlock(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true), 3);

@@ -83,15 +83,11 @@ public class CrateItem extends BlockItem {
 
         target.discard();
 
-        BlockPos.MutableBlockPos pos = target.blockPosition().mutable();
-
-        while (!level.getBlockState(pos.below()).isSolid()) {
-            pos.move(Direction.DOWN);
-        }
+        BlockPos pos = target.blockPosition();
 
         level.setBlockEntity(new CrateBlockEntity(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true)));
         level.setBlock(pos, AABlocks.CRATE.get().defaultBlockState().setValue(CrateBlock.FULL, true), 3);
-        level.playSound(null, target.blockPosition(), SoundEvents.BARREL_CLOSE, SoundSource.PLAYERS, 1, 1);
+        level.playSound(null, pos, SoundEvents.BARREL_CLOSE, SoundSource.PLAYERS, 1, 1);
 
         if (level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
             crate.setCreatureData(targetTag, crate.getPersistentData());

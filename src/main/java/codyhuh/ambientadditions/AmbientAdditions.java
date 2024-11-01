@@ -1,6 +1,9 @@
 package codyhuh.ambientadditions;
 
 import codyhuh.ambientadditions.registry.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -26,6 +29,10 @@ public class AmbientAdditions {
         AABlockEntities.BLOCK_ENTITIES.register(bus);
         AAParticles.PARTICLES.register(bus);
         AACreativeModeTabs.CREATIVE_MODE_TABS.register(bus);
+    }
+
+    private void sendMessage(PlayerEvent.PlayerLoggedInEvent e) {
+        Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal("Ambient Additions 1.1.0 BREAKS previously-crated animals! Please downgrade to 1.0.0 and uncrate your animals into the world before re-updating the mod!!"), false);
     }
 
     public static int sedationLvlRequiredToCapture(float health) {
