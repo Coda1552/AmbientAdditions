@@ -57,6 +57,11 @@ public class ShameFacedCrab extends NonSwimmer implements GeoEntity {
     }
 
     @Override
+    public int getMaxSpawnClusterSize() {
+        return 1;
+    }
+
+    @Override
     public MobType getMobType() {
         return MobType.ARTHROPOD;
     }
