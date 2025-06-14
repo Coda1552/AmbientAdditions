@@ -74,8 +74,6 @@ public class MoleDiggingGoal extends Goal {
       BlockPos blockpos = this.mole.blockPosition();
       Vec3 pos = mole.position();
 
-      Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(this.eatAnimationTick + ""), true);
-
       if (this.eatAnimationTick == 79) {
          if (this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT)) {
 
