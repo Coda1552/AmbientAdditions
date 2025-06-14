@@ -43,7 +43,7 @@ public class MoleDiggingGoal extends Goal {
          return false;
       } else {
          BlockPos blockpos = this.mole.blockPosition();
-         return this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT);
+         return level.isRainingAt(blockpos) && this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT);
       }
    }
 
@@ -90,7 +90,7 @@ public class MoleDiggingGoal extends Goal {
       else if (this.eatAnimationTick == 55) {
          this.level.playSound(null, blockpos, SoundEvents.ROOTED_DIRT_PLACE, SoundSource.BLOCKS, 0.5F, 1.0F);
       }
-      else if (this.eatAnimationTick == 47 && (level.getBlockState(blockpos.below()).is(Blocks.FARMLAND)) || level.isRainingAt(blockpos)) {
+      if (eatAnimationTick == 47) {
          List<ItemStack> items = mole.level().getServer().getLootData().getLootTable(DIGGING_LOOT).getRandomItems(new LootParams.Builder((ServerLevel) mole.level()).create(LootContextParamSets.EMPTY));
 
          ItemEntity itemEntity = EntityType.ITEM.create(level);
@@ -101,6 +101,8 @@ public class MoleDiggingGoal extends Goal {
          level.addFreshEntity(itemEntity);
 
          this.level.playSound(null, blockpos, SoundEvents.SLIME_JUMP, SoundSource.BLOCKS, 0.25F, 1.2F);
+
+         stop();
       }
    }
 }

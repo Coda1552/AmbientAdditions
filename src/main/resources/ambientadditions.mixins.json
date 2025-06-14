@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "ambientadditions.refmap.json",
   "mixins": [
+    "MobMixin"
   ],
   "client": [
   ],
