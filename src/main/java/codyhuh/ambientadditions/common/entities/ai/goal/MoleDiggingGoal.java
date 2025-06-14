@@ -1,9 +1,11 @@
 package codyhuh.ambientadditions.common.entities.ai.goal;
 
 import codyhuh.ambientadditions.AmbientAdditions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -71,6 +73,8 @@ public class MoleDiggingGoal extends Goal {
       this.eatAnimationTick = Math.max(0, this.eatAnimationTick - 1);
       BlockPos blockpos = this.mole.blockPosition();
       Vec3 pos = mole.position();
+
+      Minecraft.getInstance().getChatListener().handleSystemMessage(Component.literal(this.eatAnimationTick + ""), true);
 
       if (this.eatAnimationTick == 79) {
          if (this.level.getBlockState(blockpos.below()).is(BlockTags.DIRT)) {
