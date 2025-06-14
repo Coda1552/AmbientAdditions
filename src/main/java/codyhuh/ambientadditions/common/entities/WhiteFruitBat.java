@@ -97,6 +97,11 @@ public class WhiteFruitBat extends Animal implements FlyingAnimal, GeoEntity {
         }
     }
 
+    @Override
+    public boolean canBeLeashed(Player p_21418_) {
+        return false;
+    }
+
     public boolean wantsToFly() {
         return canFly() && getFlightTicks() <= 12000;
     }
