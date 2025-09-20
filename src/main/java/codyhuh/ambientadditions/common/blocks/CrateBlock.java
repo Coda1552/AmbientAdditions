@@ -5,6 +5,7 @@ import codyhuh.ambientadditions.registry.AABlockEntities;
 import codyhuh.ambientadditions.registry.AAItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -71,9 +72,16 @@ public class CrateBlock extends BaseEntityBlock {
         }
 
         if (!level.isClientSide()) {
-            UUID id = entity.getUUID();
+            UUID id = crate.getCreatureData().getUUID("UUID");
             entity.deserializeNBT(crate.getCreatureData());
-            entity.setUUID(id);
+
+            if (((ServerLevel) level).getEntity(id) != null) {
+                entity.setUUID(UUID.randomUUID());
+            }
+            else {
+                entity.setUUID(id);
+            }
+
             entity.moveTo(pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D, 0.0F, 0.0F);
 
             level.addFreshEntity(entity);

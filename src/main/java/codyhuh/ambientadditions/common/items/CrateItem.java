@@ -22,10 +22,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.wither.WitherBoss;
-import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -64,20 +60,17 @@ public class CrateItem extends BlockItem {
         int sedationLevel = cap.resolve().isPresent() ? cap.resolve().get().getLevel() : 0;
 
         if (canBeCrated(target) && target.getPersistentData().getBoolean("IsSedated") && sedationLevel >= AmbientAdditions.sedationLvlRequiredToCapture(target.getMaxHealth())) {
-
-            if (target instanceof TamableAnimal tame && tame.isTame()) {
-                return unsuccessfulCrate(tame, level);
-            } else {
-                return successfulCrate(target, stack, level);
-            }
-
+            return successfulCrate(player, target, stack, level);
         }
 
         return InteractionResult.sidedSuccess(true);
     }
 
-    public InteractionResult successfulCrate(LivingEntity target, ItemStack stack, Level level) {
-        stack.shrink(1);
+    public InteractionResult successfulCrate(Player player, LivingEntity target, ItemStack stack, Level level) {
+
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
 
         CompoundTag targetTag = target.serializeNBT();
 
@@ -128,7 +121,7 @@ public class CrateItem extends BlockItem {
     }
 
     private boolean canBeCrated(LivingEntity entity) {
-        return !(entity instanceof WitherBoss) && !(entity instanceof EnderDragon) && !(entity instanceof Warden) && !entity.getType().is(AATags.UNCRATEABLE);
+        return !entity.getType().is(AATags.UNCRATEABLE);
     }
 
     @Override
@@ -162,7 +155,7 @@ public class CrateItem extends BlockItem {
             Component name;
 
             if (tag.contains("CustomName")) {
-                name = Component.Serializer.fromJson(tag.getString("CustomName"));
+                name = Component.Serializer.fromJson(tag.getString("CustomName")).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC);
             } else {
                 name = EntityType.byString(tag.getString("id")).orElse(null).getDescription().copy().withStyle(ChatFormatting.GRAY);
             }

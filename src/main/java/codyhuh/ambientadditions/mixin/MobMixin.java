@@ -31,7 +31,7 @@ public abstract class MobMixin extends LivingEntity {
          ItemStack stack = player.getItemInHand(hand);
 
          if (stack.is(AAItems.CRATE.get()) && !CrateItem.containsEntity(stack)) {
-             ((CrateItem)stack.getItem()).successfulCrate(this, stack, player.level());
+             ((CrateItem)stack.getItem()).successfulCrate(player, this, stack, player.level());
          }
     }
 
