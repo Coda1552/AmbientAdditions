@@ -284,6 +284,11 @@ public class Iiwi extends TamableAnimal implements FlyingAnimal, GeoEntity {
    }
 
    private <E extends GeoEntity> PlayState predicate(AnimationState<E> event) {
+      if (isInSittingPose()) {
+         event.setAnimation(AAAnimations.SIT);
+         return PlayState.CONTINUE;
+      }
+
       if (isFlying()) {
          event.setAnimation(AAAnimations.FLY);
       }
