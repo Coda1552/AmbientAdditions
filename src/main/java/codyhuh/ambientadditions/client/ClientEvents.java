@@ -12,18 +12,7 @@ import codyhuh.ambientadditions.client.renderer.layer.AAGlowingEyesLayer;
 import codyhuh.ambientadditions.client.renderer.layer.CardiganCorgiCollarLayer;
 import codyhuh.ambientadditions.client.renderer.layer.ChameleonBrightnessLayer;
 import codyhuh.ambientadditions.client.renderer.layer.PembrokeCorgiCollarLayer;
-import codyhuh.ambientadditions.common.entities.AyeAye;
-import codyhuh.ambientadditions.common.entities.CardiganCorgi;
-import codyhuh.ambientadditions.common.entities.ChocolateChipStarfish;
-import codyhuh.ambientadditions.common.entities.HarlequinShrimp;
-import codyhuh.ambientadditions.common.entities.Mole;
-import codyhuh.ambientadditions.common.entities.PancakeSlug;
-import codyhuh.ambientadditions.common.entities.PembrokeCorgi;
-import codyhuh.ambientadditions.common.entities.SiamangGibbon;
-import codyhuh.ambientadditions.common.entities.SlothBear;
-import codyhuh.ambientadditions.common.entities.VeiledChameleon;
-import codyhuh.ambientadditions.common.entities.WhiteFruitBat;
-import codyhuh.ambientadditions.common.entities.YetiCrab;
+import codyhuh.ambientadditions.common.entities.*;
 import codyhuh.ambientadditions.common.items.CrateItem;
 import codyhuh.ambientadditions.registry.AAEntities;
 import codyhuh.ambientadditions.registry.AAItems;
@@ -56,7 +45,7 @@ public class ClientEvents {
         EntityType<?>[] simpleEntities = new EntityType[]{
                 AAEntities.GIANT_LAND_SNAIL.get(), AAEntities.LONGHORN_COWFISH.get(), AAEntities.NINE_BANDED_ARMADILLO.get(),
                 AAEntities.PINK_FAIRY_ARMADILLO.get(), AAEntities.MOUSTACHED_TAMARIN.get(), AAEntities.IIWI.get(), AAEntities.PINOCCHIO_ANOLE.get(),
-                AAEntities.MARTEN.get(), AAEntities.SPIDER_TAILED_ADDER.get(), AAEntities.RABBIT_SNAIL.get(), AAEntities.RING_TAILED_LEMUR.get(),
+                AAEntities.SPIDER_TAILED_ADDER.get(), AAEntities.RABBIT_SNAIL.get(), AAEntities.RING_TAILED_LEMUR.get(),
                 AAEntities.RUBBER_DUCKY_ISOPOD.get(), AAEntities.NAKED_MOLE_RAT.get(), AAEntities.STAG_BEETLE.get(), AAEntities.SHAME_FACED_CRAB.get(),
                 AAEntities.FLYING_FISH.get(), AAEntities.NAPOLEON_WRASSE.get(), AAEntities.OPAH.get(), AAEntities.RED_RIVER_HOG.get(),
                 AAEntities.BLUNTHEAD_TREE_SNAKE.get(), AAEntities.BLUE_SPOTTED_STINGRAY.get(), AAEntities.LEAF_FROG_TADPOLE.get(), AAEntities.LEAF_FROG.get(),
@@ -71,7 +60,6 @@ public class ClientEvents {
             render.addRenderLayer(new PembrokeCorgiCollarLayer(render));
             return render;
         });
-
 
         EntityRenderers.register(AAEntities.CARDIGAN_CORGI.get(), (ctx) -> {
             GenericGeoRenderer<CardiganCorgi> render = new GenericGeoRenderer<>(ctx, () -> new GenericGeoModel<>("cardigan_corgi"));
@@ -106,6 +94,16 @@ public class ClientEvents {
                 textures.add(new ResourceLocation(AmbientAdditions.MOD_ID, "textures/entity/chocolate_chip_starfish/starfish_" + i + ".png"));
             }
             model.setTextures(ChocolateChipStarfish::getVariant, textures);
+            return model;
+        }));
+
+        EntityRenderers.register(AAEntities.MARTEN.get(), (ctx) -> new GenericGeoRenderer<>(ctx, () -> {
+            TextureVariantModel<Marten> model = new TextureVariantModel<>("marten");
+            ArrayList<ResourceLocation> textures = new ArrayList<>();
+            for (int i=1;i<=2;i++){
+                textures.add(new ResourceLocation(AmbientAdditions.MOD_ID, "textures/entity/marten/marten_" + i + ".png"));
+            }
+            model.setTextures(Marten::getVariant, textures);
             return model;
         }));
 
